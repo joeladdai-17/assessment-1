@@ -1,3 +1,5 @@
+# Importing my Topic class
+from topic import Topic
 # Creating a Subject class
 class Subject():
 # Constructor method
@@ -13,17 +15,11 @@ class Subject():
 # Shows users topics
     def show_topics(self):
         for topic in self.topics:
-            print(topic)
+            print(topic.name)
 
-# verifying adding and displaying topics
+# quick test
 biology = Subject("Biology", "2027-01-25")
-biology.add_topic("Genetics")
-biology.add_topic("Evolution")
+genetics = Topic("Genetics", 4, 2)
+biology.add_topic(genetics)
+
 biology.show_topics()
-
-comp_science = Subject("Computer Science", "2026-11-06")
-print(comp_science.exam_date)
-comp_science.add_topic("Hexadecimals")
-comp_science.show_topics()
-
-        
