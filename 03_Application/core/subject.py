@@ -1,5 +1,5 @@
 # Importing my Topic class
-from topic import Topic
+from .topic import Topic
 # Creating a Subject class
 class Subject():
 # Constructor method
@@ -18,8 +18,9 @@ class Subject():
             print(topic.name)
 
 # quick test
-biology = Subject("Biology", "2027-01-25")
-genetics = Topic("Genetics", 4, 2)
-biology.add_topic(genetics)
+if __name__ == "__main__":
+    biology = Subject("Biology", "2027-01-25")
+    genetics = Topic("Genetics", 4, 2)
+    biology.add_topic(genetics)
 
-biology.show_topics()
+    biology.show_topics()
