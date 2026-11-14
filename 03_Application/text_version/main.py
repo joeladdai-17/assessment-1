@@ -1,4 +1,5 @@
 # Student Revision Planner - Text Version 
+# note to self: ensure validation is improved throughout after general text application is functional
 
 # 1. Imports
 from core.subject import Subject
@@ -40,14 +41,20 @@ def delete_subject():
 #Add Topic
 def add_topic():
     print("-----ADD TOPIC-----")
+    #List of subjects
     view_subject()
+
+    #users selected subject choice
     subject_choice = input("Enter one of the following subject numbers: ")
     subject_index = int(subject_choice)-1
     selected_subject = subjects[subject_index]
+
+    #allowing user to add a topic with a confidence and difficulty rating 
     topic_name = input("Enter topic name: ")
     topic_difficulty = int(input("Enter difficulty ([1-5], where 1 is easy and 5 is difficult)"))
     topic_confidence = int(input("Enter a confidence rating ([1-5], " \
     "where 1 is least confident and 5 is most confident)"))
+
     new_topic = Topic(topic_name, topic_difficulty, topic_confidence)
     selected_subject.add_topic(new_topic)
     print(f"Topic '{topic_name}' successfully added to {selected_subject.name}!")
@@ -79,13 +86,74 @@ def view_topic():
                     number += 1
 
         
-#Updating confidence rating
+#Updating the confidence rating
+#user is able to update the confidence rating of an existing topic
 def update_confidence():
+    # showing the available subjects, numbered options
+    subject_number = 1
+    for subject in subjects:
+        print(f" {subject_number}. {subject.name}")
+        subject_number += 1
+
+    userChoice = int(input("Please select a subject: "))
+    # checking is the users input is valid
+    if userChoice >= 1 and userChoice <= len(subjects):
+        selected_subject = subjects[userChoice -1]
+
+        topic_number = 1
+        # showing the topics within the selected subjects
+        for topic in selected_subject.topics:
+            print(f" {topic_number}. {topic.name}")
+            topic_number += 1
+        
+        topic_choice = int(input("Please select a topic: "))
+        #checking that the user input for topic choice is valid
+        if topic_choice >= 1 and topic_choice <= len(selected_subject.topics):
+            selected_topic = selected_subject.topics[topic_choice - 1]
+            print(f"Confidence: {selected_topic.confidence}/5")
+            #Shows the current confidence rating and asks for a new rating
+            new_confidence = int(input("Please enter a new confidence rating [1-5]/5: "))
+            # Validation to only accept confidence ratings between 1-5
+            if new_confidence >=1 and new_confidence <=5:
+                selected_topic.update_confidence(new_confidence)
+                print(f"{selected_topic.name} has been updated to {new_confidence}/5!")
+            else:
+                print("Invalid input... Try Again!")
+        else:
+            print("Invalid topic selection")
+    else:
+        print("Invalid subject selection")
+
+def update_difficulty():
     pass
 
-#Edit topic
+#Edit topic 
 def edit_topic():
-    pass
+    #Displays the menu until the user wants to go back to the Manage subjects and topics menu
+    while True:
+        print("---------- EDIT TOPICS ----------")
+        print("1. Update Confidence")
+        print("2. Update Difficulty")
+        print("3. Return to Manage Subjects and Topics")
+
+        editChoice = input("Enter an option [1-3]: ")
+        if editChoice == "1":
+            update_confidence()
+                
+        elif editChoice == "2":
+            update_difficulty()
+                    
+        elif editChoice == "3":
+            print("Returning to Manage Subjects and Topics")
+            break
+                    
+        else:
+            print("Invalid choice. Enter a number [1-3]")
+            input("Press Enter to try again...")
+
+                    
+
+        
 
 #Delete topic
 def delete_topic():
@@ -97,18 +165,19 @@ def view_timetable():
     pass
 
 
-# Display 2. Manage Subjects and Topics Menu
+# Display Manage Subjects and Topics Menu
 def manage_subMenu():
-    # Sub-menu loop (Manage Subjects and Topics)
+    # Sub-menu 
     while True:
         print("---------- MANAGE SUBJECTS AND TOPICS ----------")
         print("1. Add Subjects")
         print("2. View Subjects")
         print("3. Add Topic")
         print("4. View Topic")
-        print("5. Return to Main Menu")
+        print("5. Edit topic")
+        print("6. Return to Main Menu")
 
-        subMenu_choice = input("Enter an option [1-5]: ")
+        subMenu_choice = input("Enter an option [1-6]: ")
         if subMenu_choice == "1":
             add_subject()
 
@@ -122,11 +191,14 @@ def manage_subMenu():
             view_topic()
 
         elif subMenu_choice == "5":
+            edit_topic()
+
+        elif subMenu_choice == "6":
             print("Returning to Main Menu")
             break
         
         else:
-            print("Invalid choice. Enter an a number [1-5]")
+            print("Invalid choice. Enter a number [1-6]")
             input("Press Enter to try again...")
 
 
