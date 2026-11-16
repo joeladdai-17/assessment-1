@@ -125,7 +125,42 @@ def update_confidence():
         print("Invalid subject selection")
 
 def update_difficulty():
-    pass
+    # same structure for updating the users difficulty rating
+     # showing the available subjects, numbered options
+        subject_number = 1
+        for subject in subjects:
+            print(f" {subject_number}. {subject.name}")
+            subject_number += 1
+    
+        userChoice = int(input("Please select a subject: "))
+        # checking is the users input is valid
+        if userChoice >= 1 and userChoice <= len(subjects):
+            selected_subject = subjects[userChoice -1]
+    
+            topic_number = 1
+            # showing the topics within the selected subjects
+            for topic in selected_subject.topics:
+                print(f" {topic_number}. {topic.name}")
+                topic_number += 1
+            
+            topic_choice = int(input("Please select a topic: "))
+            #checking that the user input for topic choice is valid
+            if topic_choice >= 1 and topic_choice <= len(selected_subject.topics):
+                selected_topic = selected_subject.topics[topic_choice - 1]
+                print(f"Difficulty: {selected_topic.difficulty}/5")
+                #Shows the current difficulty rating and asks for a new rating
+                new_difficulty = int(input("Please enter a new difficulty rating [1-5]/5: "))
+                # Validation to only accept difficulty ratings between 1-5
+                if new_difficulty >=1 and new_difficulty <=5:
+                    selected_topic.update_difficulty(new_difficulty)
+                    print(f"{selected_topic.name} has been updated to {new_difficulty}/5!")
+                else:
+                    print("Invalid input... Try Again!")
+            else:
+                print("Invalid topic selection")
+        else:
+            print("Invalid subject selection")
+    
 
 #Edit topic 
 def edit_topic():
