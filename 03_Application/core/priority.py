@@ -6,10 +6,6 @@ def calc_priority(subject, topic):
     difficulty = topic.difficulty
     exam = subject.exam_urgency()
 
-    print("Confidence:", confidence)
-    print("Difficulty:", difficulty)
-    print("Exam urgency:", exam)
-
     if exam is None:
         return None
     priority = (6 - confidence) + difficulty + exam
