@@ -11,3 +11,13 @@ def calc_priority(subject, topic):
     priority = (6 - confidence) + difficulty + exam
     return priority
 
+#collects topics and ranks them 
+def rank_topics(subjects):
+    priority_topics = []
+    for subject in subjects:
+        for topic in subject.topics:
+            priority = calc_priority(subject, topic)
+            if priority is not None:
+                priority_topics.append((subject, topic, priority))
+    priority_topics.sort(key=lambda item: item[2], reverse=True)
+    return priority_topics
