@@ -208,7 +208,11 @@ def view_priority_topics(subjects):
         for result in priority_topics:
             print(f"{result[0].name} - {result[1].name} | Priority: {result[2]}")
 
-
+# creating view timetable function
+def view_revision_timetable():
+    print("========== REVISION TIMETABLE ==========")
+    for session in revision_sessions:
+        print(f"{session.date} | {session.subject.name} | {session.topic.name} | {session.duration} minutes")
 
 
 #Delete topic
@@ -286,7 +290,7 @@ def main():
             manage_subMenu()
             
         elif mainMenu_choice == "3":
-            print("View Revision Timetable Selected")
+            view_revision_timetable()
             input("Press Enter to return to the Main Menu")
 
         elif mainMenu_choice == "4":
