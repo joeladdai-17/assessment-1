@@ -10,12 +10,13 @@ sys.path.insert(0, str(application_folder))
 
 from core.subject import Subject
 from core.topic import Topic
-from core.priority import calc_priority
+from core.priority import rank_topics
+from core.revision_scheduler import generate_schedule
 
-#2. Application data
+revision_sessions = []
 subjects = []
 
-#3. Subject and topic functions
+#Subject and topic functions
 # Add Subject
 def add_subject():
     # name and exam date
@@ -196,16 +197,7 @@ def edit_topic():
                     
 
 def view_priority_topics(subjects):
-    priority_topics = []
-
-    for subject in subjects:
-        for topic in subject.topics:
-            priority = calc_priority(subject, topic)
-
-            if priority is not None:
-                priority_topics.append((subject.name, topic.name, priority))
-    # ordered from highest to lowest priority
-    priority_topics.sort(key=lambda item: item[2], reverse = True)
+    priority_topics = rank_topics(subjects)
 
     #Statement for if there's no priority topics available
     if len(priority_topics) == 0:
@@ -214,9 +206,13 @@ def view_priority_topics(subjects):
         # displaying the priority revision topics
         print("---------- PRIORITY REVISION TOPICS ----------")
         for result in priority_topics:
-            print(f"{result[0]} - {result[1]} | Priority: {result[2]}")
+            print(f"{result[0].name} - {result[1].name} | Priority: {result[2]}")
 
-
+# creating view timetable function
+def view_revision_timetable():
+    print("========== REVISION TIMETABLE ==========")
+    for session in revision_sessions:
+        print(f"{session.date} | {session.subject.name} | {session.topic.name} | {session.duration} minutes")
 
 
 #Delete topic
@@ -294,11 +290,22 @@ def main():
             manage_subMenu()
             
         elif mainMenu_choice == "3":
-            print("View Revision Timetable Selected")
+            view_revision_timetable()
             input("Press Enter to return to the Main Menu")
 
         elif mainMenu_choice == "4":
-            print("Generate Revision Schedule Selected")
+            days = input("How many days would you like to schedule? ")
+            # must be a digit and greater than zero
+            if days.isdigit() and int(days) > 0:
+                revision_sessions.clear()
+                revision_sessions.extend(generate_schedule(subjects, int(days)))
+
+                if revision_sessions:
+                    print("Revision schedule generated successfully!")
+                else:
+                    print("No topics available to schedule.")
+            else:
+                print("Please enter a valid number of days.")
             input("Press Enter to return to the Main Menu")
 
         elif mainMenu_choice == "5":
