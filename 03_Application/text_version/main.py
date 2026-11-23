@@ -12,6 +12,7 @@ from core.subject import Subject
 from core.topic import Topic
 from core.priority import rank_topics
 from core.revision_scheduler import generate_schedule
+from core.data_manager import save_data, load_data
 
 revision_sessions = []
 subjects = []
@@ -270,15 +271,15 @@ def display_mainMenu():
         print("3. View Revision Timetable")
         print("4. Generate Revision Schedule")  
         print("5. View Priority Topics")
-        print("6. Spaced Repetition")
-        print("7. Progress Overview")
-        print("8. Save and Load Data")
-        print("9. Exit")
+        print("6. Progress Overview")
+        print("7. Save and Load Data")
+        print("8. Exit")
 
 def main():
+    global subjects
     while True:
         display_mainMenu()
-        mainMenu_choice = input("Enter an option [1-9]: ")
+        mainMenu_choice = input("Enter an option [1-8]: ")
 
         # Handling users menu selection
         if mainMenu_choice == "1":
@@ -286,8 +287,8 @@ def main():
             input("Press Enter to return to the Main Menu")
 
         elif mainMenu_choice == "2":
-            #print("Manage Subjects and Topics Selected")
             manage_subMenu()
+            input("Press Enter to return to the Main Menu")
             
         elif mainMenu_choice == "3":
             view_revision_timetable()
@@ -314,23 +315,37 @@ def main():
             view_priority_topics(subjects)
 
         elif mainMenu_choice == "6":
-            print("Spaced Repetition Selected")
-            input("Press Enter to return to the Main Menu")
-
-        elif mainMenu_choice == "7":
             print("Progress Overview Selected")
             input("Press Enter to return to the Main Menu")
 
-        elif mainMenu_choice == "8":
-            print("Save and Load Data Selected")
-            input("Press Enter to return to the Main Menu")
+        elif mainMenu_choice == "7":
+            print("n1. Save Data")
+            print("2. Load Data")
+            print("3. Return to the Main Menu")
 
-        elif mainMenu_choice == "9":
-            print("Exit Selected")
+            save_choice = input("Enter an option: [1-3]: ")
+
+            if save_choice == "1":
+                save_data(subjects)
+                print("Data saved successfully.")
+
+            elif save_choice == "2":
+                subjects = load_data()
+                print("Data loaded successfully.")
+
+            elif save_choice == "3":
+                print("Returning to Main Menu")
+                input("Press Enter to return to the Main Menu")
+            else:
+                print("Invalid choice.")
+
+        elif mainMenu_choice == "8":
+            print("Exit selected")
+            print("Thank you for using the Student Revision Planner!")
             break
 
         else:
-            print("Invalid choice. Enter an a number [1-9]")
+            print("Invalid choice. Enter an a number [1-8]")
             input("Press Enter to try again...")
 
 if __name__ == "__main__":
