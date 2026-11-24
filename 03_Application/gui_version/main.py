@@ -1,6 +1,7 @@
 # GUI Version
 # Importing modules
 import tkinter as tk
+from datetime import datetime
 from tkinter import messagebox
 import sys
 from pathlib import Path 
@@ -61,7 +62,7 @@ def show_subjects_topics():
     tk.Button(buttons_frame, text="Add Subject", command= show_add_subject_form, width=20).grid(row=0, column=0, padx=20, pady=10)
 
     # creating view subject button 
-    tk.Button(buttons_frame, text="View Subjects", width=20).grid(row=0, column=1, padx=20, pady=10)
+    tk.Button(buttons_frame, text="View Subjects", command= show_view_subjects, width=20).grid(row=0, column=1, padx=20, pady=10)
 
     # creating add topic button 
     tk.Button(buttons_frame, text="Add Topic", width=20).grid(row=1, column=0, padx=20, pady=10)
@@ -103,18 +104,66 @@ def show_add_subject_form():
     exam_date_entry = tk.Entry(content_frame, width=25)
     exam_date_entry.grid(row=2, column=1, padx=10, pady=10)
 
+
     def save_subject():
-        name = subject_name_entry.get()
-        exam_date = exam_date_entry.get()
+        name = subject_name_entry.get().strip()
+        exam_date = exam_date_entry.get().strip()
+
+        if name == "" or exam_date == "":
+            messagebox.showerror("Error", "Please fill in all fields")
+            return
+
+        try:
+            datetime.strptime(exam_date, "%d/%m/%Y")
+        except ValueError:
+            messagebox.showerror("Error", "Please enter a valid date")
+            return
+
         newSubject = Subject(name, exam_date)
         subjects.append(newSubject)
-
         messagebox.showinfo("Success", f"{name} added successfully!")
 
     tk.Button(content_frame, 
         text="Save Subject", 
         command=save_subject,
         width=20).grid(row=3, column=0, columnspan=2, pady=20)
+
+def show_view_subjects():
+    clear_content()
+    view_subject_label = tk.Label(content_frame, 
+            text="View Subject",
+            font=("Arial", 20, "bold"),
+            bg="#F1F5F9")
+    
+    view_subject_label.grid(row=0, column=0, padx=30, pady=30)
+
+    
+
+    if len(subjects) == 0:
+        no_subjects_label = tk.Label(content_frame, 
+               text="No subjects",
+               font=("Arial", 14, "bold"),
+               bg="#F1F5F9")
+        
+        no_subjects_label.grid(row=1, column=0, padx=10, pady=10)
+
+    row_number = 1
+
+    for subject in subjects:
+        subject_name_label = tk.Label(content_frame,
+        text=subject.name,
+        font=("Arial", 14, "bold"),
+        bg="#F1F5F9")
+
+        subject_name_label.grid(row=row_number, column=0, padx=30, pady=30)
+
+        exam_date_label = tk.Label(content_frame,
+                text=subject.exam_date,
+                font=("Arial", 14, "bold"),
+                bg="#F1F5F9")
+        
+        exam_date_label.grid(row=row_number, column=1, padx=30, pady=30)
+        row_number += 1
 
 
 
