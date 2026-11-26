@@ -76,7 +76,7 @@ def show_subjects_topics():
     tk.Button(buttons_frame, text="Add Topic", command=show_add_topic_form, width=20).grid(row=0, column=1, padx=20, pady=10)
 
     # creating view topic button
-    tk.Button(buttons_frame, text="View Topics", width=20).grid(row=1, column=1, padx=20, pady=10)
+    tk.Button(buttons_frame, text="View Topics", command=show_view_topic_form, width=20).grid(row=1, column=1, padx=20, pady=10)
 
     #creating edit topic button 
     tk.Button(buttons_frame, text="Edit Topics", width=20).grid(row=2, column=1, padx=20, pady=10)
@@ -93,7 +93,6 @@ def show_add_subject_form():
         text="Add New Subject",
         font=("Arial", 20, "bold"),
         bg="#F1F5F9")
-
     add_subject_label.grid(row=0, column=0, padx=30, pady=30)
 
     # subject name
@@ -101,7 +100,6 @@ def show_add_subject_form():
         text="Subject Name:",
         font=("Arial", 14, "bold"),
                 bg="#F1F5F9")
-    
     subject_name_label.grid(row=1, column=0, padx=30, pady=30)
 
     # entry box
@@ -335,7 +333,6 @@ def show_add_topic_form():
             text="Add Topic",
             font=("Arial", 20, "bold"),
             bg="#F1F5F9")
-    
     add_topic_label.grid(row=0, column=0, padx=30, pady=30)
 
     subject_names = []
@@ -400,8 +397,8 @@ def show_add_topic_form():
             return
 
         if difficulty == "":
-                    messagebox.showerror("Error", "Please select a difficulty rating [1-5]")
-                    return
+            messagebox.showerror("Error", "Please select a difficulty rating [1-5]")
+            return
 
         if confidence == "":
             messagebox.showerror("Error", "Please select a confidence rating [1-5]")
@@ -415,14 +412,95 @@ def show_add_topic_form():
             if subject.name == select_subject:
                 new_topic = Topic(topic_name, difficulty, confidence)
                 subject.add_topic(new_topic)
-                messagebox.showinfo("Success", "Topic added successfully!")
+                messagebox.showinfo("Success", f"{topic_name} added successfully!")
                 return
-
-        
+            
     # add topic button
     tk.Button(content_frame, text="Add Topic", command=add_topic, width=20).grid(row=5, column=1, padx=10, pady=10)
 
+# view topics
+def show_view_topic_form():
+    # checking if theres no subjects available
+    if len(subjects) == 0:
+        messagebox.showerror("Error", "No subjects available")
+        return
+    clear_content()
+    view_topic_label = tk.Label(content_frame, 
+                text="View Topics",
+                font=("Arial", 20, "bold"),
+                bg="#F1F5F9")
+    view_topic_label.grid(row=0, column=0, padx=30, pady=30)
+
+    subject_names = []
+    for subject in subjects:
+        subject_names.append(subject.name)
     
+    select_subject_label = tk.Label(content_frame, 
+                    text="Select Subject: ",
+                    font=("Arial", 15, "bold"),
+                    bg="#F1F5F9")
+    select_subject_label.grid(row=1, column=0, padx=30, pady=30)
+
+    select_subject_dropdown = ttk.Combobox(content_frame, values=subject_names, state="readonly")
+    select_subject_dropdown.grid(row=1, column=1, padx=10, pady=10)
+
+    #view topics functionality
+    def view_topics():
+        select_subject = select_subject_dropdown.get()
+        if select_subject == "":
+            messagebox.showerror("Error","Please select a subject")
+            return
+
+        for subject in subjects:
+            if subject.name == select_subject:
+                if len(subject.topics) == 0:
+                    messagebox.showinfo("Information", "No topics available for this subject")
+                    return
+
+                #headings for topic name, difficulty and confidence
+                topic_name_heading = tk.Label(content_frame,
+                                    text="Topic Name",
+                                    font=("Arial", 14, "bold"),
+                                    bg="#F1F5F9")
+                topic_name_heading.grid(row=3, column=0, padx=30, pady=30)
+
+                difficulty_heading = tk.Label(content_frame,
+                                    text="Difficulty",
+                                    font=("Arial", 14, "bold"),
+                                    bg="#F1F5F9")
+                difficulty_heading.grid(row=3, column=1, padx=30, pady=30)
+
+                confidence_heading = tk.Label(content_frame,
+                                                    text="Confidence",
+                                                    font=("Arial", 14, "bold"),
+                                                    bg="#F1F5F9")
+                confidence_heading.grid(row=3, column=2, padx=30, pady=30)
+
+                row_number = 4
+                for topic in subject.topics:
+                    topic_name_label = tk.Label(content_frame,
+                            text=topic.name,
+                            font=("Arial", 14, "bold"),
+                            bg="#F1F5F9")
+                    topic_name_label.grid(row=row_number, column=0, padx=30, pady=30)
+                    
+                    difficulty_label = tk.Label(content_frame,
+                            text=topic.difficulty,
+                            font=("Arial", 14, "bold"),
+                            bg="#F1F5F9")
+                    difficulty_label.grid(row=row_number, column=1, padx=30, pady=30)
+
+                    confidence_label = tk.Label(content_frame,
+                            text=topic.confidence,
+                            font=("Arial", 14, "bold"),
+                            bg="#F1F5F9")
+                    confidence_label.grid(row=row_number, column=2, padx=30, pady=30)
+
+                    row_number += 1
+                
+
+    #view button 
+    tk.Button(content_frame, text="View Topics",command=view_topics, width=20).grid(row=2, column=1, padx=10, pady=10)
     
 
 
