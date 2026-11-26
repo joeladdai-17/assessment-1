@@ -11,6 +11,7 @@ application_folder = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(application_folder))
 
 from core.subject import Subject
+from core.topic import Topic
 
 subjects = []
 
@@ -72,7 +73,7 @@ def show_subjects_topics():
     tk.Button(buttons_frame, text="Delete Subject", command=show_delete_subject_form, width=20).grid(row=3,column=0, padx=20, pady=10)
     
     # creating add topic button 
-    tk.Button(buttons_frame, text="Add Topic", width=20).grid(row=0, column=1, padx=20, pady=10)
+    tk.Button(buttons_frame, text="Add Topic", command=show_add_topic_form, width=20).grid(row=0, column=1, padx=20, pady=10)
 
     # creating view topic button
     tk.Button(buttons_frame, text="View Topics", width=20).grid(row=1, column=1, padx=20, pady=10)
@@ -321,7 +322,109 @@ def show_delete_subject_form():
 
 # delete button
     tk.Button(content_frame, text="Delete Subject", command=delete_subject, width=20).grid(row=2, column=0, columnspan=2, pady=20)  
+
+# Topic
+def show_add_topic_form():
+    # checking if theres no subjects available
+    if len(subjects) == 0:
+        messagebox.showerror("Error", "No subjects available")
+        return
+    clear_content()
     
+    add_topic_label = tk.Label(content_frame, 
+            text="Add Topic",
+            font=("Arial", 20, "bold"),
+            bg="#F1F5F9")
+    
+    add_topic_label.grid(row=0, column=0, padx=30, pady=30)
+
+    subject_names = []
+    for subject in subjects:
+        subject_names.append(subject.name)
+
+    select_subject_dropdown = ttk.Combobox(content_frame, values=subject_names, state="readonly")
+    select_subject_dropdown.grid(row=1, column=1, padx=10, pady=10)
+
+    select_subject_label = tk.Label(content_frame, 
+                text="Select Subject: ",
+                font=("Arial", 15, "bold"),
+                bg="#F1F5F9")
+    select_subject_label.grid(row=1, column=0, padx=30, pady=30)
+
+    # topic name label and entry field
+    topic_name_label = tk.Label(content_frame, 
+                text="Topic Name: ",
+                font=("Arial", 15, "bold"),
+                bg="#F1F5F9")
+    topic_name_label.grid(row=2, column=0, padx=30, pady=30)
+
+    topic_name_entry = tk.Entry(content_frame, width=25)
+    topic_name_entry.grid(row=2, column=1, padx=10, pady=10)
+
+    # difficulty label and dropdown
+    difficulty_label = tk.Label(content_frame, 
+                       text="Difficulty (1-5): ",
+                       font=("Arial", 15, "bold"),
+                       bg="#F1F5F9")
+    difficulty_label.grid(row=3, column=0, padx=30, pady=30)
+    
+    difficulty_dropdown = ttk.Combobox(content_frame, values=[1, 2, 3, 4, 5], state="readonly")
+    difficulty_dropdown.grid(row=3, column=1, padx=10, pady=10)
+    
+    # confidence label and dropdown 
+    confidence_label = tk.Label(content_frame, 
+                    text="Confidence (1-5): ",
+                    font=("Arial", 15, "bold"),
+                    bg="#F1F5F9")
+    confidence_label.grid(row=4, column=0, padx=30, pady=30)
+
+    confidence_dropdown = ttk.Combobox(content_frame, values=[1, 2, 3, 4, 5], state="readonly")
+    confidence_dropdown.grid(row=4, column=1, padx=10, pady=10)
+
+    
+
+    #add topic functionality
+    def add_topic():
+        select_subject = select_subject_dropdown.get()
+        topic_name = topic_name_entry.get().strip()
+        difficulty = difficulty_dropdown.get()
+        confidence = confidence_dropdown.get()
+
+        # making sure the user doesnt leave blank options
+        if select_subject == "":
+            messagebox.showerror("Error", "Please select a subject")
+            return
+
+        if topic_name == "":
+            messagebox.showerror("Error", "Please enter the topic")
+            return
+
+        if difficulty == "":
+                    messagebox.showerror("Error", "Please select a difficulty rating [1-5]")
+                    return
+
+        if confidence == "":
+            messagebox.showerror("Error", "Please select a confidence rating [1-5]")
+            return
+
+        # converting difficulty and confidence selected ratings into integers
+        difficulty = int(difficulty)
+        confidence = int(confidence)
+
+        for subject in subjects:
+            if subject.name == select_subject:
+                new_topic = Topic(topic_name, difficulty, confidence)
+                subject.add_topic(new_topic)
+                messagebox.showinfo("Success", "Topic added successfully!")
+                return
+
+        
+    # add topic button
+    tk.Button(content_frame, text="Add Topic", command=add_topic, width=20).grid(row=5, column=1, padx=10, pady=10)
+
+    
+    
+
 
 #Buttons
 tk.Button(sidebar_frame, text="Dashboard", command= show_dashboard, width=20).grid(row=0, column=0, padx=10, pady=10)
