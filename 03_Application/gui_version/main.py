@@ -53,7 +53,6 @@ def show_subjects_topics():
             text="Manage Subjects and Topics",
             font=("Arial", 20, "bold"),
             bg="#F1F5F9")
-    
     subject_topics_label.grid(row=0, column=0, padx=30, pady=30)
 
     # frames for buttons
@@ -79,7 +78,7 @@ def show_subjects_topics():
     tk.Button(buttons_frame, text="View Topics", command=show_view_topic_form, width=20).grid(row=1, column=1, padx=20, pady=10)
 
     #creating edit topic button 
-    tk.Button(buttons_frame, text="Edit Topics", width=20).grid(row=2, column=1, padx=20, pady=10)
+    tk.Button(buttons_frame, text="Edit Topics",command=show_edit_topic_form, width=20).grid(row=2, column=1, padx=20, pady=10)
 
     #creating delete topic button 
     tk.Button(buttons_frame, text="Delete Topic", width=20).grid(row=3, column=1, padx=20, pady=10)
@@ -111,7 +110,6 @@ def show_add_subject_form():
             text="Exam Date (DD/MM/YYYY):",
             font=("Arial", 14, "bold"),
                     bg="#F1F5F9")
-        
     exam_date_label.grid(row=2, column=0, padx=30, pady=30)
 
     exam_date_entry = tk.Entry(content_frame, width=25)
@@ -378,8 +376,6 @@ def show_add_topic_form():
     confidence_dropdown = ttk.Combobox(content_frame, values=[1, 2, 3, 4, 5], state="readonly")
     confidence_dropdown.grid(row=4, column=1, padx=10, pady=10)
 
-    
-
     #add topic functionality
     def add_topic():
         select_subject = select_subject_dropdown.get()
@@ -497,11 +493,149 @@ def show_view_topic_form():
                     confidence_label.grid(row=row_number, column=2, padx=30, pady=30)
 
                     row_number += 1
-                
-
     #view button 
     tk.Button(content_frame, text="View Topics",command=view_topics, width=20).grid(row=2, column=1, padx=10, pady=10)
-    
+
+ # edit topic
+def show_edit_topic_form():
+    clear_content()
+    edit_topic_label = tk.Label(content_frame,
+                text="Edit Topic",
+                font=("Arial", 20, "bold"),
+                bg="#F1F5F9")
+    edit_topic_label.grid(row=0, column=0, padx=30, pady=30)
+
+    if len(subjects) == 0:
+        messagebox.showerror("Error", "No subjects available")
+        return
+
+    subject_names = []
+    for subject in subjects:
+        subject_names.append(subject.name)
+
+    # Select subject
+    tk.Label(content_frame, text="Select Subject:",
+             font=("Arial", 14, "bold"),
+             bg="#F1F5F9").grid(row=1, column=0, padx=30, pady=10)
+
+    subject_dropdown = ttk.Combobox(content_frame,
+                                    values=subject_names,
+                                    state="readonly")
+    subject_dropdown.grid(row=1, column=1, padx=10, pady=10)
+
+    # Select topic
+    tk.Label(content_frame, text="Select Topic:",
+             font=("Arial", 14, "bold"),
+             bg="#F1F5F9").grid(row=2, column=0, padx=30, pady=10)
+
+    topic_dropdown = ttk.Combobox(content_frame,
+                                  values=[],
+                                  state="readonly")
+    topic_dropdown.grid(row=2, column=1, padx=10, pady=10)
+
+    # Topic name
+    tk.Label(content_frame, text="Topic Name:",
+             font=("Arial", 14, "bold"),
+             bg="#F1F5F9").grid(row=3, column=0, padx=30, pady=10)
+
+    topic_name_entry = tk.Entry(content_frame)
+    topic_name_entry.grid(row=3, column=1, padx=10, pady=10)
+
+    # Difficulty
+    tk.Label(content_frame, text="Difficulty:",
+             font=("Arial", 14, "bold"),
+             bg="#F1F5F9").grid(row=4, column=0, padx=30, pady=10)
+
+    difficulty_dropdown = ttk.Combobox(content_frame,
+                                       values=[1, 2, 3, 4, 5],
+                                       state="readonly")
+    difficulty_dropdown.grid(row=4, column=1, padx=10, pady=10)
+
+    # Confidence
+    tk.Label(content_frame, text="Confidence:",
+             font=("Arial", 14, "bold"),
+             bg="#F1F5F9").grid(row=5, column=0, padx=30, pady=10)
+
+    confidence_dropdown = ttk.Combobox(content_frame,
+                                       values=[1, 2, 3, 4, 5],
+                                       state="readonly")
+    confidence_dropdown.grid(row=5, column=1, padx=10, pady=10)
+
+    # Populate topic dropdown
+    def populate_topics(event):
+        selected_subject = subject_dropdown.get()
+
+        topic_dropdown.set("")
+        topic_name_entry.delete(0, tk.END)
+        difficulty_dropdown.set("")
+        confidence_dropdown.set("")
+
+        topic_names = []
+
+        for subject in subjects:
+            if subject.name == selected_subject:
+                for topic in subject.topics:
+                    topic_names.append(topic.name)
+                topic_dropdown.config(values=topic_names)
+
+                if len(topic_names) == 0:
+                    messagebox.showinfo("Information", "No topics available")
+                return
+
+    # Populate existing topic details
+    def populate_topic_details(event):
+        selected_subject = subject_dropdown.get()
+        selected_topic = topic_dropdown.get()
+
+        for subject in subjects:
+            if subject.name == selected_subject:
+                for topic in subject.topics:
+                    if topic.name == selected_topic:
+                        topic_name_entry.delete(0, tk.END)
+                        topic_name_entry.insert(0, topic.name)
+
+                        difficulty_dropdown.set(topic.difficulty)
+                        confidence_dropdown.set(topic.confidence)
+                        return
+
+    # Save changes
+    def save_changes():
+        selected_subject = subject_dropdown.get()
+        selected_topic = topic_dropdown.get()
+        new_topic_name = topic_name_entry.get().strip()
+
+        if selected_subject == "" or selected_topic == "":
+            messagebox.showerror("Error", "Please select a subject and topic")
+            return
+
+        if new_topic_name == "":
+            messagebox.showerror("Error","Topic name cannot be empty")
+            return
+
+        if difficulty_dropdown.get() == "" or confidence_dropdown.get() == "":
+            messagebox.showerror("Error", "Please select difficulty and confidence")
+            return
+
+        new_difficulty = int(difficulty_dropdown.get())
+        new_confidence = int(confidence_dropdown.get())
+
+        for subject in subjects:
+            if subject.name == selected_subject:
+                for topic in subject.topics:
+                    if topic.name == selected_topic:
+
+                        topic.name = new_topic_name
+                        topic.difficulty = new_difficulty
+                        topic.confidence = new_confidence
+
+                        messagebox.showinfo("Success", "Topic updated successfully")
+                        show_edit_topic_form()
+                        return
+
+    subject_dropdown.bind("<<ComboboxSelected>>", populate_topics)
+    topic_dropdown.bind("<<ComboboxSelected>>", populate_topic_details)
+
+    tk.Button(content_frame, text="Save Changes", command=save_changes, width=20).grid(row=6, column=1, padx=10, pady=20)
 
 
 #Buttons
