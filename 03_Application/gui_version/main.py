@@ -81,7 +81,7 @@ def show_subjects_topics():
     tk.Button(buttons_frame, text="Edit Topics",command=show_edit_topic_form, width=20).grid(row=2, column=1, padx=20, pady=10)
 
     #creating delete topic button 
-    tk.Button(buttons_frame, text="Delete Topic", width=20).grid(row=3, column=1, padx=20, pady=10)
+    tk.Button(buttons_frame, text="Delete Topic",command=show_delete_topic_form, width=20).grid(row=3, column=1, padx=20, pady=10)
 
 
     
@@ -636,6 +636,76 @@ def show_edit_topic_form():
     topic_dropdown.bind("<<ComboboxSelected>>", populate_topic_details)
 
     tk.Button(content_frame, text="Save Changes", command=save_changes, width=20).grid(row=6, column=1, padx=10, pady=20)
+
+# delete topic
+def show_delete_topic_form():
+    clear_content()
+
+    delete_topic_label = tk.Label(content_frame, 
+                    text="Delete Topic",
+                    font=("Arial", 20, "bold"),
+                    bg="#F1F5F9")
+    delete_topic_label.grid(row=0, column=0, padx=30, pady=30)
+    
+    if len(subjects) == 0:
+        tk.Label(content_frame, text="No subjects available ", bg="#F1F5F9").grid(row=1, column=0)
+        return
+    
+    subject_names = []
+    
+    for subject in subjects:
+        subject_names.append(subject.name) 
+    
+    tk.Label(content_frame, text="Select Subject:", bg="#F1F5F9").grid(row=1, column=0)
+    
+    subject_dropdown = ttk.Combobox(content_frame,
+                        values=subject_names, state="readonly")
+    subject_dropdown.grid(row=1, column=1, padx=10, pady=10)
+
+    tk.Label(content_frame, text="Select Topic:", bg="#F1F5F9").grid(row=2, column=0)
+
+    topic_dropdown = ttk.Combobox(content_frame,
+                values=[], state="readonly")
+    topic_dropdown.grid(row=2, column=1, padx=10, pady=10)
+
+
+    def populate_topics(event):
+        selected_subject = subject_dropdown.get()
+        topic_dropdown.set("")
+        topic_names = []
+
+        for subject in subjects:
+            if subject.name == selected_subject:
+                for topic in subject.topics:
+                    topic_names.append(topic.name)
+                topic_dropdown.config(values=topic_names)
+    subject_dropdown.bind("<<ComboboxSelected>>", populate_topics)
+
+    def delete_topic():
+        subject_index = subject_dropdown.current()
+        topic_index = topic_dropdown.current()
+        
+        if subject_index == -1:
+            messagebox.showerror("Error", "Please select a subject")
+            return
+        selected_subject = subjects[subject_index]
+
+        if topic_index == -1:
+                    messagebox.showerror("Error", "Please select a topic")
+                    return
+        selected_topic = selected_subject.topics[topic_index]
+
+        #confirmation message
+        confirm = messagebox.askyesno("Confirm Deletion",
+                                        f"Are you sure you want to delete {selected_topic.name}?")
+
+        if confirm:
+            selected_subject.topics.pop(topic_index)
+            show_delete_topic_form()
+            messagebox.showinfo("Success", f"You have successfully deleted {selected_topic.name}")
+
+# delete button
+    tk.Button(content_frame, text="Delete Topic", command=delete_topic, width=20).grid(row=3, column=0, columnspan=2, pady=20)
 
 
 #Buttons
